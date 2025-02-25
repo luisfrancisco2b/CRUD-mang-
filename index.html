@@ -3,9 +3,19 @@
 {% block content %}
 <div class="manga-container">
     <h2>Meus Mangás</h2>
-    
+
+    <div class="filter-section">
+        <label for="statusFilter">Filtrar por Status:</label>
+        <select id="statusFilter" onchange="filtrarManga(this.value)">
+            <option value="todos">Todos</option>
+            <option value="Em Andamento">Em Andamento</option>
+            <option value="Finalizado">Finalizado</option>
+            <option value="Em Hiato">Em Hiato</option>
+        </select>
+    </div>
+
     <button onclick="toggleForm()" class="add-btn">Adicionar Novo Mangá</button>
-    
+
     <div id="addMangaForm" style="display: none;">
         <form method="POST" action="{{ url_for('add_manga') }}" class="manga-form">
             <div class="form-group">
@@ -55,11 +65,10 @@
                 <td>{{ manga[4] }}</td>
                 <td>{{ manga[5] }}</td>
                 <td>{{ manga[6] }}</td>
-                <td>
+                <td id="excluir">
                     <a href="{{ url_for('edit_manga', id=manga[0]) }}" class="edit-btn">Editar</a>
-                    <a href="{{ url_for('delete_manga', id=manga[0]) }}" 
-                       onclick="return confirm('Tem certeza que deseja excluir?')" 
-                       class="delete-btn">Excluir</a>
+                    <a href="{{ url_for('delete_manga', id=manga[0]) }}"
+                        onclick="return confirm('Tem certeza que deseja excluir?')" class="delete-btn">Excluir</a>
                 </td>
             </tr>
             {% endfor %}
@@ -68,9 +77,21 @@
 </div>
 
 <script>
-function toggleForm() {
-    var form = document.getElementById('addMangaForm');
-    form.style.display = form.style.display === 'none' ? 'block' : 'none';
-}
+    function toggleForm() {
+        var form = document.getElementById('addMangaForm');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function filtrarManga(status) {
+        const linhas = document.querySelectorAll('.manga-table tbody tr');
+        linhas.forEach(linha => {
+            const statusManga = linha.querySelector('td:nth-child(5)').textContent;
+            if (status === 'todos' || statusManga === status) {
+                linha.style.display = '';
+            } else {
+                linha.style.display = 'none';
+            }
+        });
+    }
 </script>
-{% endblock %} 
+{% endblock %}
